@@ -61,6 +61,14 @@
                 "Standard_A2",
                 "Standard_A3"
             ]
+        },
+        "vmNAme": {
+          "type": "string",
+          "defaultValue": "[concat('vm','ResourceGroup().name')]",
+          "metadata": {
+            "desctription": "Name for Azure Virtual Machine"
+          }
+
         }
 
 
@@ -74,7 +82,12 @@
       "VnetId":"[resourceId('Microsoft.Network/virtualNetworks',variables('VirtualNetworkName'))]",
       "SubnetRef": "[concat(variables('VnetId'),'/subnets/',variables('SubnetName'))]",
       "publicIpAddressName":"comaPublicIP",
-      "publicIpAddressType":"dynamic"
+      "publicIpAddressType":"dynamic",
+      "vmName": "coma",
+      "osImagePublisher": "Canonical",
+      "osImageOffer": "UbuntuServer",
+      "osImageSku": "18.04-LTS",
+      "osImageVersion": "Latest"
       },
     "resources": [
       {
@@ -126,7 +139,7 @@
         "apiVersion": "2017-10-01",
         "dependsOn": [
           "[Concat('Microsoft.Network/publicUPAddresses/',variables('publicIpAddressName'))]",
-          "[Concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]",
+          "[Concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
           ],
         "properties":{
           "ipConfigurations":[
@@ -144,7 +157,51 @@
             }
           ]
         }
-      }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "name": "[parameters('vmName')]",
+        "apiVersion": "2017-12-01",
+        "location": "[parameters('location')]",
+        "properties":{
+          "hardwareProfile":{
+            "vmSize":"[parameters('vmSize')]" 
+          },
+          "osProfile":{
+            "computerName": "[concat(parameters('vmNAme'))]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassowrd')]"
+            }
+          },
+          "storageProfile":{
+            "imageReference":{
+              "publisher": "[variables('osImagePublisher')]",
+              "offer": "[variables('osImageOffer')]",
+              "sku": "[variables('osImageSku')]",
+              "version": "[variables('osImageVersion')]"
+            }
+          },
+          "osDisk": {
+            "createOption": "FromImage"
+          },
+          "dataDisk" : {
+            "lun" : 0,
+            "name": "data",
+            "managedDisk" :{
+              "storagAccountType": "Standard_GRS"
+            },
+            "diskSizeGB": 32
+          },
+          "networkProfile": {
+            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterface'))]"
+          },
+          "diagnosticsProfile": {
+            "bootDiagnostics": {
+              "enabled": "true",
+              "storageUri":"[concat('http://',parameters('newStorageAccount'),'blob.core.windows.net')]"
+            }
+          }
+        }
     ],
     "outputs": {  
 
