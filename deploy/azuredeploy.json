@@ -124,7 +124,9 @@
         "type": "Microsoft.Network/networkInterfaces",
         "name": "[variables('networkInterface')]",
         "apiVersion": "2017-10-01",
-        "location":"[parameters('location')]"
+        "properties":{
+          
+        }
       }
     ],
     "outputs": {  
