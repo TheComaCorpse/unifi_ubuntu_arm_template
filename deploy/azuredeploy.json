@@ -76,14 +76,14 @@
     "variables": { 
       "IpAddressPrefix": "172.16.0.0/16",
       "SubnetPrefix":"172.16.6.0/24",
-      "SubnetName":"comaVMNet",
-      "VirtualNetworkName":"ComaVNet",
+      "SubnetName":"[concat(parameters('vmName'),'/vmsubnet/')]",
+      "VirtualNetworkName":"[concat(parameters('vmName'),'/myVNET/')]",
       "networkInterface":"vmNic",
       "VnetId":"[resourceId('Microsoft.Network/virtualNetworks',variables('VirtualNetworkName'))]",
       "SubnetRef": "[concat(variables('VnetId'),'/subnets/',variables('SubnetName'))]",
       "publicIpAddressName":"comaPublicIP",
       "publicIpAddressType":"dynamic",
-      "vmName": "coma",
+      "vmName": "comaunifi",
       "osImagePublisher": "Canonical",
       "osImageOffer": "UbuntuServer",
       "osImageSku": "18.04-LTS",
@@ -160,7 +160,7 @@
       },
       {
         "type": "Microsoft.Compute/virtualMachines",
-        "name": "[parameters('vmName')]",
+        "name": "[variables('vmName')]",
         "apiVersion": "2017-12-01",
         "location": "[parameters('location')]",
         "properties":{
