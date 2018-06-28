@@ -170,16 +170,14 @@
             "computerName": "[concat(parameters('vmNAme'))]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPassowrd')]"
-            }
-          },
+            },     
           "storageProfile":{
             "imageReference":{
               "publisher": "[variables('osImagePublisher')]",
               "offer": "[variables('osImageOffer')]",
               "sku": "[variables('osImageSku')]",
               "version": "[variables('osImageVersion')]"
-            }
-          },
+            },          
           "osDisk": {
             "createOption": "FromImage"
           },
@@ -190,7 +188,8 @@
               "storagAccountType": "Standard_GRS"
             },
             "diskSizeGB": 32
-          },
+          }
+        },
           "networkProfile": {
             "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterface'))]"
           },
@@ -201,6 +200,7 @@
             }
           }
         }
+      }
     ],
     "outputs": {  
 

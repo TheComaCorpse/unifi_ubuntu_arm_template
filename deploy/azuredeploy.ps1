@@ -5,4 +5,4 @@ Connect-AzureRmAccount
 
 New-AzureRmResourceGroup -Location 'East Us 2' -Name ComaCorpUnifi
 
-New-AzureRmResourceGroupDeployment -Name Unifideploy -ResourceGroupName ComaCorpUnifi -TemplateFile $templatefile -TemplateParameterFile $parameterfile 
+New-AzureRmResourceGroupDeployment -Name Unifideploy -ResourceGroupName ComaCorpUnifi -TemplateFile $templatefile -TemplateParameterFile $parameterfile -verbose
