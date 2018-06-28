@@ -13,7 +13,7 @@
           "defaultValue": "Standard_LRS",
           "allowedValues": [
             "Standard_LRS",
-            "Standard+GRS",
+            "Standard_GRS",
             "Standard_RAGRS",
             "Standard_ZRS",
             "Premium_LRS",
@@ -95,9 +95,9 @@
         "apiVersion": "2017-10-01",
         "location":"[parameters('location')]",
         "kind": "StorageV2",
-        "properties":{
-           "sku": "[parameters('storageAccountType')]"
-        }  
+        "sku": {
+          "name": "[parameters('storageAccountType')]"
+        }
       },
       {
         "type":"Microsoft.Network/publicIPAddresses",
@@ -180,10 +180,15 @@
               "version": "[variables('osImageVersion')]"
             },          
           "osDisk": {
-            "createOption": "FromImage"
+            "osType":"Linux",
+            "managedDisk":{
+              "storageAccountType":"Standard_LRS"
+            },
+            "createOption": "FromImage",
+            "diskSizeGB": 32
           },
           "dataDisk" : {
-            "lun" : 0,
+            "lun" : 1,
             "name": "data",
             "diskSizeGB": 32,
             "managedDisk" :{
