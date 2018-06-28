@@ -4,7 +4,7 @@
     "parameters": { 
         "newStorageAccount": {
             "type":"string",
-            "metadate": {
+            "metadata": {
                 "description" : "Unique DNS name of the Storage Account for Azure"
             }      
         },
