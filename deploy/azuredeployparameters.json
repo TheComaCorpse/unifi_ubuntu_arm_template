@@ -1,0 +1,57 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "newStorageAccount": {
+            "value": "unifistoracct"
+        },
+        "storageAccountType":{
+            "value": "Standard_LRS"
+        },
+        "location":{
+            "value": "[resourceGroup().location]"
+        },
+        "adminUsername":{
+            "value": "comaAdmin"
+        },
+        "adminPassowrd": {
+            "value": "something1"
+        },
+        "dnsNameForPublicIp":{
+            "value": "comaunifi"
+        },
+        "vmName": {
+            "value": "UnifiCore"
+        },
+        "vmSize" :{
+            "value": "Standard_A2"
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
