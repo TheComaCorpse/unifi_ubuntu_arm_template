@@ -1,9 +1,3 @@
-#install updates
-sudo apt-get -y update
-
-#install MongoDB
-sudo apt-get install -y MongoDB-org
-
 #install Ubiquiti unifi controller
 echo 'deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti' | sudo tee /etc/apt/sources.list.d/100-ubnt.unifi.list
 
