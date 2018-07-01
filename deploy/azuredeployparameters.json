@@ -12,7 +12,7 @@
             "value": "comaAdmin"
         },
         "adminPassowrd": {
-            "value": "something1"
+            "value": "Something1"
         },
         "dnsNameForPublicIp":{
             "value": "comaunifi"
