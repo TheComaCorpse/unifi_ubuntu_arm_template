@@ -7,5 +7,6 @@ sudo wget -O /etc/apt/trusted.gpg.d/unifi-repo.gpg https://dl.ubnt.com/unifi/uni
 #Update to latest Package
 sudo apt-get update --allow-releaseinfo-change
 
-#Install and upgrade the Unifi Controller
-sudo apt-get install unifi
+#Install and upgrade the Unifi Controller and Java SDK 8
+sudo apt-get -y install unifi openjdk-8-jdk
+
