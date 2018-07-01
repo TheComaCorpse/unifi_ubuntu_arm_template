@@ -86,7 +86,9 @@
       "osImagePublisher": "Canonical",
       "osImageOffer": "UbuntuServer",
       "osImageSku": "18.04-LTS",
-      "osImageVersion": "Latest"
+      "osImageVersion": "Latest",
+      "unifiExtensionsUri":"github link",
+      "installUnifitemplateUri":"github link"
       },
     "resources": [
       {
@@ -216,6 +218,41 @@
               "enabled": true,
               "storageUri":"[concat('http://',parameters('newStorageAccount'),'.blob.core.windows.net')]"
             }
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines/extensions",
+        "name":"configureUnifi",
+        "apiVersion": "2017-12-01",
+        "location": "[parameters('location')]",
+        "dependsOn": [
+          "[Concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
+        ],
+        "properties":{
+          "publisher": "Microsoft.Azure.Extensions",
+          "type": "CustomScript",
+          "typeHandlerVersion": "2.0",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "fileUris": [
+              "[variables('unifiExtensionsUri')]"
+            ],
+            "commandToExecute": "sh unifi-config-ubuntu.sh"
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Resources/deployments",
+        "name": "installUnifi",
+        "apiVersion": "2017-05-10",
+        "dependsOn": [
+          "[concat('Microsoft.compute/virtualMachines/',parameters('vmName'),'/extensions/configureUnifi')]"
+        ],
+        "properties": {
+          "mode":"Incremental",
+          "templateLink":{
+            "uri": "[variables('installUnifitemplateUri')]"
           }
         }
       }
