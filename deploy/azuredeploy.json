@@ -90,6 +90,7 @@
       "networkInterface":"vmNic",
       "VnetId":"[resourceId('Microsoft.Network/virtualNetworks',variables('VirtualNetworkName'))]",
       "SubnetRef": "[concat(variables('VnetId'),'/subnets/',variables('SubnetName'))]",
+      "networkSecurityGroup" : "netSecGrp",
       "publicIpAddressType":"dynamic",
       "osImagePublisher": "Canonical",
       "osImageOffer": "UbuntuServer",
@@ -126,6 +127,9 @@
         "name":"[variables('VirtualNetworkName')]",
         "apiVersion": "2017-10-01",
         "location": "[parameters('location')]",
+        "dependsOn": [
+          "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroup'))]"
+        ],
         "properties":{
           "addressSpace":{
             "addressPrefixes":[
@@ -165,6 +169,184 @@
                 }
               }
             }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/networkSecurityGroups" ,
+        "name": "[variables('networkSecurityGroup')]" ,
+        "apiVersion": "2017-10-01",
+        "location":"[parameters('location')]",
+        "properties":{
+          "securityRules": [
+            {
+              "name": "unifiSecRulesTcp8443In",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 8443 Inbound",
+                "priority": 100,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Inbound",
+                "sourcePortRange": "8443",
+                "destinationPortRange": "8443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp8443Out",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 8443 Inbound",
+                "priority": 101,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Outbound",
+                "sourcePortRange": "8443",
+                "destinationPortRange": "8443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesTcp8080In",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 8080 Inbound",
+              "priority": 110,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Inbound",
+              "sourcePortRange": "8080",
+              "destinationPortRange": "8080",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesTcp8080Out",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 8080 Inbound",
+              "priority": 111,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Outbound",
+              "sourcePortRange": "8080",
+              "destinationPortRange": "8080",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp8843In",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 8843 Inbound",
+                "priority": 120,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Inbound",
+                "sourcePortRange": "8843",
+                "destinationPortRange": "8843",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp8843Out",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 8843 Inbound",
+                "priority": 121,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Outbound",
+                "sourcePortRange": "8843",
+                "destinationPortRange": "8843",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp8880In",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 8880 Inbound",
+                "priority": 130,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Inbound",
+                "sourcePortRange": "8880",
+                "destinationPortRange": "8880",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp8880Out",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 8880 Inbound",
+                "priority": 131,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Outbound",
+                "sourcePortRange": "8880",
+                "destinationPortRange": "8880",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp6789In",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 6789 Inbound",
+                "priority": 140,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Inbound",
+                "sourcePortRange": "6789",
+                "destinationPortRange": "6789",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp6789Out",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 6789 Inbound",
+                "priority": 141,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Outbound",
+                "sourcePortRange": "6789",
+                "destinationPortRange": "6789",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp3478In",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
+                "priority": 150,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Inbound",
+                "sourcePortRange": "3478",
+                "destinationPortRange": "3478",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesTcp3478Out",
+              "properties":{
+                "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
+                "priority": 151,
+                "protocol":"Tcp",
+                "access":"Allow",
+                "direction":"Outbound",
+                "sourcePortRange": "3478",
+                "destinationPortRange": "3478",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            }                                  
           ]
         }
       },
