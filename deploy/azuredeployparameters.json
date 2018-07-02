@@ -18,7 +18,7 @@
             "value": "comaunifi"
         },
         "vmName": {
-            "value": "UnifiCore"
+            "value": "unifiCore"
         },
         "vmSize" :{
             "value": "Standard_A0"
