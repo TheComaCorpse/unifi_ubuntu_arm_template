@@ -68,14 +68,23 @@
           "metadata": {
             "desctription": "Name for Azure Virtual Machine"
           }
-
+        },
+        "addressPrefix": {
+          "type":"string",
+          "defaultValue": "10.0.0.0/16",
+          "metadata": {
+            "description": "VM local IP address Prefix"
+          }
+        },
+        "subnetPrefix": {
+          "type": "string",
+          "defaultValue":"10.0.0.0/24",
+          "metadata": {
+            "description" : "Vm local IP address Subnet Prefix"
+          }            
         }
-
-
-    },
+      },    
     "variables": { 
-      "IpAddressPrefix": "172.16.0.0/16",
-      "SubnetPrefix":"172.16.6.0/24",
       "SubnetName":"[concat(parameters('vmName'),'vmsubnet')]",
       "VirtualNetworkName":"[concat(parameters('vmName'),'myVNET')]",
       "networkInterface":"vmNic",
@@ -120,14 +129,14 @@
         "properties":{
           "addressSpace":{
             "addressPrefixes":[
-              "[variables('IpAddressPrefix')]"
+              "[parameters('addressPrefix')]"              
             ]
           },
           "subnets":[
             {
               "name": "[variables('SubnetName')]",
               "properties":{
-                "addressPrefix": "[variables('SubnetPrefix')]"
+                "addressPrefix": "[parameters('subnetPrefix')]"
               }
             }
           ]
