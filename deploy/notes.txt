@@ -1,0 +1,2 @@
+Add new section Microsoft.resource/deployments to install unifi and java8
+Reorganize resources section "Microsoft.Compute/virtualMachines/extensions" to configure Linux vm. 
