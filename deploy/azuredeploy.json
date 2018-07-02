@@ -82,13 +82,11 @@
       "VnetId":"[resourceId('Microsoft.Network/virtualNetworks',variables('VirtualNetworkName'))]",
       "SubnetRef": "[concat(variables('VnetId'),'/subnets/',variables('SubnetName'))]",
       "publicIpAddressType":"dynamic",
-      "vmName": "comaunifi",
       "osImagePublisher": "Canonical",
       "osImageOffer": "UbuntuServer",
       "osImageSku": "18.04-LTS",
       "osImageVersion": "Latest",
-      "unifiExtensionsUri":"github link",
-      "installUnifitemplateUri":"github link"
+      "installUnifitemplateUri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-install-ubuntu.sh"
       },
     "resources": [
       {
@@ -163,7 +161,7 @@
       },
       {
         "type": "Microsoft.Compute/virtualMachines",
-        "name": "[variables('vmName')]",
+        "name": "[parameters('vmName')]",
         "apiVersion": "2017-12-01",
         "location": "[parameters('location')]",
         "dependsOn": [
@@ -223,7 +221,7 @@
       },
       {
         "type": "Microsoft.Compute/virtualMachines/extensions",
-        "name":"configureUnifi",
+        "name": "[concat(parameters('vmName'),'/installunifi')]",
         "apiVersion": "2017-12-01",
         "location": "[parameters('location')]",
         "dependsOn": [
@@ -236,23 +234,9 @@
           "autoUpgradeMinorVersion": true,
           "settings": {
             "fileUris": [
-              "[variables('unifiExtensionsUri')]"
+              "[variables('installUnifitemplateUri')]"
             ],
-            "commandToExecute": "sh unifi-config-ubuntu.sh"
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "name": "installUnifi",
-        "apiVersion": "2017-05-10",
-        "dependsOn": [
-          "[concat('Microsoft.compute/virtualMachines/',parameters('vmName'),'/extensions/configureUnifi')]"
-        ],
-        "properties": {
-          "mode":"Incremental",
-          "templateLink":{
-            "uri": "[variables('installUnifitemplateUri')]"
+            "commandToExecute": "sh unifi-install-ubuntu.sh"
           }
         }
       }
