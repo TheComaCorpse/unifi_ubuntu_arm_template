@@ -418,9 +418,9 @@
         "dependsOn": [
           "[Concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
         ],
-        "properties":{
-          "publisher": "Microsoft.Azure.Extensions",
+        "properties":{          
           "type": "CustomScript",
+          "publisher": "Microsoft.Azure.Extensions",
           "typeHandlerVersion": "2.0",
           "autoUpgradeMinorVersion": true,
           "settings": {
