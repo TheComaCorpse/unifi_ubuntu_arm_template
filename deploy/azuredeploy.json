@@ -1,537 +1,538 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.5",
-    "parameters": { 
-        "newStorageAccount": {
-            "type":"string",
-            "metadata": {
-                "description" : "Unique DNS name of the Storage Account for Azure"
-            }      
-        },
-        "storageAccountType": {
-          "type": "string",
-          "defaultValue": "Standard_LRS",
-          "allowedValues": [
-            "Standard_LRS",
-            "Standard_GRS",
-            "Standard_RAGRS",
-            "Standard_ZRS",
-            "Premium_LRS",
-            "Premium_ZRS",
-            "Premium_GRS",
-            "Premium_RAGRS"
-          ],
-          "metadata": {
-            "description":"Storage type for the VM"
-          }
-        },
-        "location": {
-          "type": "string",
-          "defaultValue": "[resourceGroup().location]",
-          "metadata":{
-            "description": "Location of all resources"
-          }
-        },
-        "adminUsername": {
-          "type": "string",
-          "metadata": {
-            "description":"Username for VM's admin account"
-          }
-        },
-        "adminPassowrd" : {
-          "type": "securestring",
-          "minLength": 8,
-          "metadata": {
-            "description": "Password for VM's admin account.**use Azure Keyvault**"
-          }
-        },
-        "dnsNameForPublicIP": {
-          "type": "string",
-          "metadata": {
-            "description": "Unique DNS name for Public IP of VM"
-          }
-        },
-        "vmSize": {
-            "type": "string",
-            "defaultValue": "Basic_A0",
-            "allowedValues": [
-                "Basic_A0",
-                "Standard_A0",
-                "Standard_A1",
-                "Standard_A2",
-                "Standard_A3"
-            ]
-        },
-        "vmName": {
-          "type": "string",
-          "defaultValue": "[concat('vm','ResourceGroup().name')]",
-          "metadata": {
-            "desctription": "Name for Azure Virtual Machine"
-          }
-        },
-        "addressPrefix": {
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.5",
+  "parameters": { 
+      "newStorageAccount": {
           "type":"string",
-          "defaultValue": "10.0.0.0/16",
           "metadata": {
-            "description": "VM local IP address Prefix"
-          }
-        },
-        "subnetPrefix": {
-          "type": "string",
-          "defaultValue":"10.0.0.0/24",
-          "metadata": {
-            "description" : "Vm local IP address Subnet Prefix"
-          }            
-        }
-      },    
-    "variables": { 
-      "SubnetName":"[concat(parameters('vmName'),'vmsubnet')]",
-      "VirtualNetworkName":"[concat(parameters('vmName'),'myVNET')]",
-      "networkInterface":"vmNic",
-      "VnetId":"[resourceId('Microsoft.Network/virtualNetworks',variables('VirtualNetworkName'))]",
-      "SubnetRef": "[concat(variables('VnetId'),'/subnets/',variables('SubnetName'))]",
-      "networkSecurityGroup" : "netSecGrp",
-      "publicIpAddressType":"dynamic",
-      "osImagePublisher": "Canonical",
-      "osImageOffer": "UbuntuServer",
-      "osImageSku": "18.04-LTS",
-      "osImageVersion": "Latest",
-      "installUnifitemplateUri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-install-ubuntu.sh",
-      "configUnifiTemplateUri": "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-config-ubuntu.sh"
+              "description" : "Unique DNS name of the Storage Account for Azure"
+          }      
       },
-    "resources": [
-      {
-        "type": "Microsoft.Storage/storageAccounts",
-        "name": "[parameters('newStorageAccount')]" ,
-        "apiVersion": "2017-10-01",
-        "location":"[parameters('location')]",
-        "kind": "StorageV2",
-        "sku": {
-          "name": "[parameters('storageAccountType')]"
-        }
-      },
-      {
-        "type":"Microsoft.Network/publicIPAddresses",
-        "name":"[parameters('dnsNameForPublicIP')]",
-        "apiVersion": "2017-10-01",
-        "location":"[parameters('location')]",
-        "properties":{
-          "publicIPAllocationMethod":"[variables('publicIpAddressType')]",
-          "dnsSettings":{
-            "domainNameLabel": "[parameters('dnsNameForPublicIP')]"
-          }
-
-        }
-      },
-      {
-        "type":"Microsoft.Network/virtualNetworks",
-        "name":"[variables('VirtualNetworkName')]",
-        "apiVersion": "2017-10-01",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroup'))]"
+      "storageAccountType": {
+        "type": "string",
+        "defaultValue": "Standard_LRS",
+        "allowedValues": [
+          "Standard_LRS",
+          "Standard_GRS",
+          "Standard_RAGRS",
+          "Standard_ZRS",
+          "Premium_LRS",
+          "Premium_ZRS",
+          "Premium_GRS",
+          "Premium_RAGRS"
         ],
-        "properties":{
-          "addressSpace":{
-            "addressPrefixes":[
-              "[parameters('addressPrefix')]"              
-            ]
-          },
-          "subnets":[
-            {
-              "name": "[variables('SubnetName')]",
-              "properties":{
-                "addressPrefix": "[parameters('subnetPrefix')]"
-              }
-            }
-          ]
+        "metadata": {
+          "description":"Storage type for the VM"
         }
       },
-      {
-        "type": "Microsoft.Network/networkInterfaces",
-        "name": "[variables('networkInterface')]",
-        "apiVersion": "2017-10-01",
-        "dependsOn": [
-          "[Concat('Microsoft.Network/publicIPAddresses/',parameters('dnsNameForPublicIP'))]",
-          "[Concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
-          ],
-        "location" : "[parameters('location')]",
-        "properties":{
-          "ipConfigurations":[
-            {
-              "name": "ipconfig",
-              "properties":{               
-                "publicIPAddress":{
-                  "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('dnsNameForPublicIP'))]"
-                },
-                "privateIPAllocationMethod":"Dynamic",
-                "subnet" :{
-                  "id": "[variables('SubnetRef')]"
-                }
-              }
-            }
-          ]
+      "location": {
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata":{
+          "description": "Location of all resources"
         }
       },
-      {
-        "type": "Microsoft.Network/networkSecurityGroups" ,
-        "name": "[variables('networkSecurityGroup')]" ,
-        "apiVersion": "2017-10-01",
-        "location":"[parameters('location')]",
-        "properties":{
-          "securityRules": [
-              {
-                "name": "unifiSecRulesTcp22In",
-                "properties":{
-                  "description":"Allow Unifi Conntroller TCP port 22 Inbound",
-                  "priority": 10,
-                  "protocol":"Tcp",
-                  "access":"Allow",
-                  "direction":"Inbound",
-                  "sourcePortRange": "22",
-                  "destinationPortRange": "22",
-                  "sourceAddressPrefix": "*",
-                  "destinationAddressPrefix": "*"
-                }
+      "adminUsername": {
+        "type": "string",
+        "metadata": {
+          "description":"Username for VM's admin account"
+        }
+      },
+      "adminPassowrd" : {
+        "type": "securestring",
+        "minLength": 8,
+        "metadata": {
+          "description": "Password for VM's admin account.**use Azure Keyvault**"
+        }
+      },
+      "dnsNameForPublicIP": {
+        "type": "string",
+        "metadata": {
+          "description": "Unique DNS name for Public IP of VM"
+        }
+      },
+      "vmSize": {
+          "type": "string",
+          "defaultValue": "Basic_A0",
+          "allowedValues": [
+              "Basic_A0",
+              "Standard_A0",
+              "Standard_A1",
+              "Standard_A2",
+              "Standard_A3"
+          ]
+      },
+      "vmName": {
+        "type": "string",
+        "defaultValue": "[concat('vm','ResourceGroup().name')]",
+        "metadata": {
+          "desctription": "Name for Azure Virtual Machine"
+        }
+      },
+      "addressPrefix": {
+        "type":"string",
+        "defaultValue": "10.0.0.0/16",
+        "metadata": {
+          "description": "VM local IP address Prefix"
+        }
+      },
+      "subnetPrefix": {
+        "type": "string",
+        "defaultValue":"10.0.0.0/24",
+        "metadata": {
+          "description" : "Vm local IP address Subnet Prefix"
+        }            
+      }
+    },    
+  "variables": { 
+    "SubnetName":"[concat(parameters('vmName'),'vmsubnet')]",
+    "VirtualNetworkName":"[concat(parameters('vmName'),'myVNET')]",
+    "networkInterface":"vmNic",
+    "VnetId":"[resourceId('Microsoft.Network/virtualNetworks',variables('VirtualNetworkName'))]",
+    "SubnetRef": "[concat(variables('VnetId'),'/subnets/',variables('SubnetName'))]",
+    "networkSecurityGroup" : "netSecGrp",
+    "publicIpAddressType":"dynamic",
+    "osImagePublisher": "Canonical",
+    "osImageOffer": "UbuntuServer",
+    "osImageSku": "18.04-LTS",
+    "osImageVersion": "Latest",
+    "installUnifitemplateUri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-install-ubuntu.sh"    
+    },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[parameters('newStorageAccount')]" ,
+      "apiVersion": "2017-10-01",
+      "location":"[parameters('location')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "type":"Microsoft.Network/publicIPAddresses",
+      "name":"[parameters('dnsNameForPublicIP')]",
+      "apiVersion": "2017-10-01",
+      "location":"[parameters('location')]",
+      "properties":{
+        "publicIPAllocationMethod":"[variables('publicIpAddressType')]",
+        "dnsSettings":{
+          "domainNameLabel": "[parameters('dnsNameForPublicIP')]"
+        }
+
+      }
+    },
+    {
+      "type":"Microsoft.Network/virtualNetworks",
+      "name":"[variables('VirtualNetworkName')]",
+      "apiVersion": "2017-10-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroup'))]"
+      ],
+      "properties":{
+        "addressSpace":{
+          "addressPrefixes":[
+            "[parameters('addressPrefix')]"              
+          ]
+        },
+        "subnets":[
+          {
+            "name": "[variables('SubnetName')]",
+            "properties":{
+              "addressPrefix": "[parameters('subnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('networkInterface')]",
+      "apiVersion": "2017-10-01",
+      "dependsOn": [
+        "[Concat('Microsoft.Network/publicIPAddresses/',parameters('dnsNameForPublicIP'))]",
+        "[Concat('Microsoft.Network/virtualNetworks/',variables('virtualNetworkName'))]"
+        ],
+      "location" : "[parameters('location')]",
+      "properties":{
+        "ipConfigurations":[
+          {
+            "name": "ipconfig",
+            "properties":{               
+              "publicIPAddress":{
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('dnsNameForPublicIP'))]"
               },
-              {
-                "name": "unifiSecRulesTcp22Out",
-                "properties":{
-                  "description":"Allow Unifi Conntroller TCP port 22 Inbound",
-                  "priority": 11,
-                  "protocol":"Tcp",
-                  "access":"Allow",
-                  "direction":"Outbound",
-                  "sourcePortRange": "22",
-                  "destinationPortRange": "22",
-                  "sourceAddressPrefix": "*",
-                  "destinationAddressPrefix": "*"
+              "privateIPAllocationMethod":"Dynamic",
+              "subnet" :{
+                "id": "[variables('SubnetRef')]"
               }
-            },
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups" ,
+      "name": "[variables('networkSecurityGroup')]" ,
+      "apiVersion": "2017-10-01",
+      "location":"[parameters('location')]",
+      "properties":{
+        "securityRules": [
             {
-              "name": "unifiSecRulesTcp8443In",
+              "name": "unifiSecRulesTcp22In",
               "properties":{
-                "description":"Allow Unifi Conntroller TCP port 8443 Inbound",
-                "priority": 100,
+                "description":"Allow Unifi Conntroller TCP port 22 Inbound",
+                "priority": 102,
                 "protocol":"Tcp",
                 "access":"Allow",
                 "direction":"Inbound",
-                "sourcePortRange": "8443",
-                "destinationPortRange": "8443",
+                "sourcePortRange": "22",
+                "destinationPortRange": "22",
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "*"
               }
             },
             {
-              "name": "unifiSecRulesTcp8443Out",
+              "name": "unifiSecRulesTcp22Out",
               "properties":{
-                "description":"Allow Unifi Conntroller TCP port 8443 Inbound",
-                "priority": 101,
+                "description":"Allow Unifi Conntroller TCP port 22 Inbound",
+                "priority": 103,
                 "protocol":"Tcp",
                 "access":"Allow",
                 "direction":"Outbound",
-                "sourcePortRange": "8443",
-                "destinationPortRange": "8443",
+                "sourcePortRange": "22",
+                "destinationPortRange": "22",
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "*"
             }
           },
           {
-            "name": "unifiSecRulesTcp8080In",
+            "name": "unifiSecRulesTcp8443In",
             "properties":{
-              "description":"Allow Unifi Conntroller TCP port 8080 Inbound",
-              "priority": 110,
+              "description":"Allow Unifi Conntroller TCP port 8443 Inbound",
+              "priority": 100,
               "protocol":"Tcp",
               "access":"Allow",
               "direction":"Inbound",
-              "sourcePortRange": "8080",
-              "destinationPortRange": "8080",
+              "sourcePortRange": "8443",
+              "destinationPortRange": "8443",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*"
             }
           },
           {
-            "name": "unifiSecRulesTcp8080Out",
+            "name": "unifiSecRulesTcp8443Out",
             "properties":{
-              "description":"Allow Unifi Conntroller TCP port 8080 Inbound",
-              "priority": 111,
+              "description":"Allow Unifi Conntroller TCP port 8443 Inbound",
+              "priority": 101,
               "protocol":"Tcp",
               "access":"Allow",
               "direction":"Outbound",
-              "sourcePortRange": "8080",
-              "destinationPortRange": "8080",
+              "sourcePortRange": "8443",
+              "destinationPortRange": "8443",
               "sourceAddressPrefix": "*",
               "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesTcp8843In",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 8843 Inbound",
-                "priority": 120,
-                "protocol":"Tcp",
-                "access":"Allow",
-                "direction":"Inbound",
-                "sourcePortRange": "8843",
-                "destinationPortRange": "8843",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesTcp8843Out",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 8843 Inbound",
-                "priority": 121,
-                "protocol":"Tcp",
-                "access":"Allow",
-                "direction":"Outbound",
-                "sourcePortRange": "8843",
-                "destinationPortRange": "8843",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesTcp8880In",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 8880 Inbound",
-                "priority": 130,
-                "protocol":"Tcp",
-                "access":"Allow",
-                "direction":"Inbound",
-                "sourcePortRange": "8880",
-                "destinationPortRange": "8880",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesTcp8880Out",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 8880 Inbound",
-                "priority": 131,
-                "protocol":"Tcp",
-                "access":"Allow",
-                "direction":"Outbound",
-                "sourcePortRange": "8880",
-                "destinationPortRange": "8880",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesTcp6789In",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 6789 Inbound",
-                "priority": 140,
-                "protocol":"Tcp",
-                "access":"Allow",
-                "direction":"Inbound",
-                "sourcePortRange": "6789",
-                "destinationPortRange": "6789",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesTcp6789Out",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 6789 Inbound",
-                "priority": 141,
-                "protocol":"Tcp",
-                "access":"Allow",
-                "direction":"Outbound",
-                "sourcePortRange": "6789",
-                "destinationPortRange": "6789",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesUdp3478In",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
-                "priority": 150,
-                "protocol":"Udp",
-                "access":"Allow",
-                "direction":"Inbound",
-                "sourcePortRange": "3478",
-                "destinationPortRange": "3478",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesUdp3478Out",
-              "properties":{
-                "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
-                "priority": 151,
-                "protocol":"Udp",
-                "access":"Allow",
-                "direction":"Outbound",
-                "sourcePortRange": "3478",
-                "destinationPortRange": "3478",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesUdp10001In",
-              "properties":{
-                "description":"Allow Unifi Conntroller UDP port 10001 Inbound",
-                "priority": 160,
-                "protocol":"Udp",
-                "access":"Allow",
-                "direction":"Inbound",
-                "sourcePortRange": "10001",
-                "destinationPortRange": "10001",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesUsp10001Out",
-              "properties":{
-                "description":"Allow Unifi Conntroller UDP port 10001 Inbound",
-                "priority": 161,
-                "protocol":"Udp",
-                "access":"Allow",
-                "direction":"Outbound",
-                "sourcePortRange": "10001",
-                "destinationPortRange": "10001",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },            
-            {
-              "name": "unifiSecRulesUdp1900In",
-              "properties":{
-                "description":"Allow Unifi Conntroller UDP port 1900 Inbound",
-                "priority": 170,
-                "protocol":"Udp",
-                "access":"Allow",
-                "direction":"Inbound",
-                "sourcePortRange": "1900",
-                "destinationPortRange": "1900",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            },
-            {
-              "name": "unifiSecRulesUdp1900Out",
-              "properties":{
-                "description":"Allow Unifi Conntroller UDP port 1900 Inbound",
-                "priority": 161,
-                "protocol":"Udp",
-                "access":"Allow",
-                "direction":"Outbound",
-                "sourcePortRange": "1900",
-                "destinationPortRange": "1900",
-                "sourceAddressPrefix": "*",
-                "destinationAddressPrefix": "*"
-              }
-            }                                                      
-          ]
-        }
-      },
-      {
-        "type": "Microsoft.Compute/virtualMachines",
-        "name": "[parameters('vmName')]",
-        "apiVersion": "2017-12-01",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "[Concat('Microsoft.Storage/storageAccounts/',parameters('newStorageAccount'))]",
-          "[Concat('Microsoft.Network/networkInterfaces/',variables('networkInterface'))]"
-        ],
-        "properties":{
-          "hardwareProfile":{
-            "vmSize":"[parameters('vmSize')]" 
-          },
-          "osProfile":{
-            "computerName": "[concat(parameters('vmNAme'))]",
-            "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassowrd')]"
-            },     
-          "storageProfile":{
-            "imageReference":{
-              "publisher": "[variables('osImagePublisher')]",
-              "offer": "[variables('osImageOffer')]",
-              "sku": "[variables('osImageSku')]",
-              "version": "[variables('osImageVersion')]"
-            },                    
-          "osDisk": {
-            "osType":"Linux",
-            "managedDisk":{
-              "storageAccountType":"[parameters('storageAccountType')]"
-            },
-            "createOption": "FromImage",
-            "diskSizeGB": 32
-          },
-          "dataDisks":[
-            {
-              "lun": 1,
-              "name": "dump",
-              "createOption":"Empty",
-              "diskSizeGB": 32,
-              "managedDisk":{
-                "storageAccountType":"Standard_LRS"
-              }
-            }
-          ]      
+          }
         },
-          "networkProfile": {
-            "networkInterfaces" :[
-              {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterface'))]"  
-              }                  
-            ]
+        {
+          "name": "unifiSecRulesTcp8080In",
+          "properties":{
+            "description":"Allow Unifi Conntroller TCP port 8080 Inbound",
+            "priority": 110,
+            "protocol":"Tcp",
+            "access":"Allow",
+            "direction":"Inbound",
+            "sourcePortRange": "8080",
+            "destinationPortRange": "8080",
+            "sourceAddressPrefix": "*",
+            "destinationAddressPrefix": "*"
+          }
+        },
+        {
+          "name": "unifiSecRulesTcp8080Out",
+          "properties":{
+            "description":"Allow Unifi Conntroller TCP port 8080 Inbound",
+            "priority": 111,
+            "protocol":"Tcp",
+            "access":"Allow",
+            "direction":"Outbound",
+            "sourcePortRange": "8080",
+            "destinationPortRange": "8080",
+            "sourceAddressPrefix": "*",
+            "destinationAddressPrefix": "*"
+            }
           },
-          "diagnosticsProfile": {
-            "bootDiagnostics": {
-              "enabled": true,
-              "storageUri":"[concat('http://',parameters('newStorageAccount'),'.blob.core.windows.net')]"
+          {
+            "name": "unifiSecRulesTcp8843In",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 8843 Inbound",
+              "priority": 120,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Inbound",
+              "sourcePortRange": "8843",
+              "destinationPortRange": "8843",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesTcp8843Out",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 8843 Inbound",
+              "priority": 121,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Outbound",
+              "sourcePortRange": "8843",
+              "destinationPortRange": "8843",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesTcp8880In",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 8880 Inbound",
+              "priority": 130,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Inbound",
+              "sourcePortRange": "8880",
+              "destinationPortRange": "8880",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesTcp8880Out",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 8880 Inbound",
+              "priority": 131,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Outbound",
+              "sourcePortRange": "8880",
+              "destinationPortRange": "8880",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesTcp6789In",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 6789 Inbound",
+              "priority": 140,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Inbound",
+              "sourcePortRange": "6789",
+              "destinationPortRange": "6789",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesTcp6789Out",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 6789 Inbound",
+              "priority": 141,
+              "protocol":"Tcp",
+              "access":"Allow",
+              "direction":"Outbound",
+              "sourcePortRange": "6789",
+              "destinationPortRange": "6789",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesUdp3478In",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
+              "priority": 150,
+              "protocol":"Udp",
+              "access":"Allow",
+              "direction":"Inbound",
+              "sourcePortRange": "3478",
+              "destinationPortRange": "3478",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesUdp3478Out",
+            "properties":{
+              "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
+              "priority": 151,
+              "protocol":"Udp",
+              "access":"Allow",
+              "direction":"Outbound",
+              "sourcePortRange": "3478",
+              "destinationPortRange": "3478",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesUdp10001In",
+            "properties":{
+              "description":"Allow Unifi Conntroller UDP port 10001 Inbound",
+              "priority": 160,
+              "protocol":"Udp",
+              "access":"Allow",
+              "direction":"Inbound",
+              "sourcePortRange": "10001",
+              "destinationPortRange": "10001",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesUsp10001Out",
+            "properties":{
+              "description":"Allow Unifi Conntroller UDP port 10001 Inbound",
+              "priority": 161,
+              "protocol":"Udp",
+              "access":"Allow",
+              "direction":"Outbound",
+              "sourcePortRange": "10001",
+              "destinationPortRange": "10001",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },            
+          {
+            "name": "unifiSecRulesUdp1900In",
+            "properties":{
+              "description":"Allow Unifi Conntroller UDP port 1900 Inbound",
+              "priority": 170,
+              "protocol":"Udp",
+              "access":"Allow",
+              "direction":"Inbound",
+              "sourcePortRange": "1900",
+              "destinationPortRange": "1900",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          },
+          {
+            "name": "unifiSecRulesUdp1900Out",
+            "properties":{
+              "description":"Allow Unifi Conntroller UDP port 1900 Inbound",
+              "priority": 171,
+              "protocol":"Udp",
+              "access":"Allow",
+              "direction":"Outbound",
+              "sourcePortRange": "1900",
+              "destinationPortRange": "1900",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*"
+            }
+          }                                                      
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmName')]",
+      "apiVersion": "2017-12-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[Concat('Microsoft.Storage/storageAccounts/',parameters('newStorageAccount'))]",
+        "[Concat('Microsoft.Network/networkInterfaces/',variables('networkInterface'))]"
+      ],
+      "properties":{
+        "hardwareProfile":{
+          "vmSize":"[parameters('vmSize')]" 
+        },
+        "osProfile":{
+          "computerName": "[concat(parameters('vmNAme'))]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassowrd')]"
+          },     
+        "storageProfile":{
+          "imageReference":{
+            "publisher": "[variables('osImagePublisher')]",
+            "offer": "[variables('osImageOffer')]",
+            "sku": "[variables('osImageSku')]",
+            "version": "[variables('osImageVersion')]"
+          },                    
+        "osDisk": {
+          "osType":"Linux",
+          "managedDisk":{
+            "storageAccountType":"[parameters('storageAccountType')]"
+          },
+          "createOption": "FromImage",
+          "diskSizeGB": 32
+        },
+        "dataDisks":[
+          {
+            "lun": 1,
+            "name": "dump",
+            "createOption":"Empty",
+            "diskSizeGB": 32,
+            "managedDisk":{
+              "storageAccountType":"Standard_LRS"
             }
           }
-        }
+        ]      
       },
-      {
-        "type": "Microsoft.Compute/virtualMachines/extensions",
-        "name": "[concat(parameters('vmName'),'/installunifi')]",
-        "apiVersion": "2017-12-01",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "[Concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
-        ],
-        "properties":{          
-          "type": "CustomScript",
-          "publisher": "Microsoft.Azure.Extensions",
-          "typeHandlerVersion": "2.0",
-          "autoUpgradeMinorVersion": true,
-          "settings": {
-            "fileUris": [
-              "[variables('installUnifitemplateUri')]"
-            ],
-            "commandToExecute": "sh unifi-install-ubuntu.sh"
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Resources/deployments",
-        "name": "[concat(parameters('vmName'),'/unifi-config-ubuntu')]",
-        "apiVersion": "2017-05-10",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMAchines/extensions/', parameters('vmName'))]"
-        ],
-        "properties": {
-          "mode":"Incremental",
-          "templateLink":{
-            "uri": "[variables('configUnifiTemplateUri')]"
+        "networkProfile": {
+          "networkInterfaces" :[
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterface'))]"  
+            }                  
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri":"[concat('http://',parameters('newStorageAccount'),'.blob.core.windows.net')]"
           }
         }
       }
-    ],
-    "outputs": {  
-
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'),'/installUnifi')]",
+      "apiVersion": "2017-12-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[Concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
+      ],
+      "properties":{          
+        "type": "CustomScript",
+        "publisher": "Microsoft.Azure.Extensions",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[variables('installUnifitemplateUri')]"
+          ],
+          "commandToExecute": "sh unifi-install-ubuntu.sh"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "name": "configUnifi",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),'/extensions/installUnifi')]"
+      ],
+      "properties":{
+        "mode":"Incremental",
+        "templateLink":{
+          "uri": "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/deployment.json"
+        },
+        "parameters":{
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          }
+        }          
+      }
     }
+  ]
 }
