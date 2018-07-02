@@ -179,6 +179,34 @@
         "location":"[parameters('location')]",
         "properties":{
           "securityRules": [
+              {
+                "name": "unifiSecRulesTcp22In",
+                "properties":{
+                  "description":"Allow Unifi Conntroller TCP port 22 Inbound",
+                  "priority": 10,
+                  "protocol":"Tcp",
+                  "access":"Allow",
+                  "direction":"Inbound",
+                  "sourcePortRange": "22",
+                  "destinationPortRange": "22",
+                  "sourceAddressPrefix": "*",
+                  "destinationAddressPrefix": "*"
+                }
+              },
+              {
+                "name": "unifiSecRulesTcp22Out",
+                "properties":{
+                  "description":"Allow Unifi Conntroller TCP port 22 Inbound",
+                  "priority": 11,
+                  "protocol":"Tcp",
+                  "access":"Allow",
+                  "direction":"Outbound",
+                  "sourcePortRange": "22",
+                  "destinationPortRange": "22",
+                  "sourceAddressPrefix": "*",
+                  "destinationAddressPrefix": "*"
+              }
+            },
             {
               "name": "unifiSecRulesTcp8443In",
               "properties":{
@@ -320,11 +348,11 @@
               }
             },
             {
-              "name": "unifiSecRulesTcp3478In",
+              "name": "unifiSecRulesUdp3478In",
               "properties":{
                 "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
                 "priority": 150,
-                "protocol":"Tcp",
+                "protocol":"Udp",
                 "access":"Allow",
                 "direction":"Inbound",
                 "sourcePortRange": "3478",
@@ -334,11 +362,11 @@
               }
             },
             {
-              "name": "unifiSecRulesTcp3478Out",
+              "name": "unifiSecRulesUdp3478Out",
               "properties":{
                 "description":"Allow Unifi Conntroller TCP port 3478 Inbound",
                 "priority": 151,
-                "protocol":"Tcp",
+                "protocol":"Udp",
                 "access":"Allow",
                 "direction":"Outbound",
                 "sourcePortRange": "3478",
@@ -346,7 +374,63 @@
                 "sourceAddressPrefix": "*",
                 "destinationAddressPrefix": "*"
               }
-            }                                  
+            },
+            {
+              "name": "unifiSecRulesUdp10001In",
+              "properties":{
+                "description":"Allow Unifi Conntroller UDP port 10001 Inbound",
+                "priority": 160,
+                "protocol":"Udp",
+                "access":"Allow",
+                "direction":"Inbound",
+                "sourcePortRange": "10001",
+                "destinationPortRange": "10001",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesUsp10001Out",
+              "properties":{
+                "description":"Allow Unifi Conntroller UDP port 10001 Inbound",
+                "priority": 161,
+                "protocol":"Udp",
+                "access":"Allow",
+                "direction":"Outbound",
+                "sourcePortRange": "10001",
+                "destinationPortRange": "10001",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },            
+            {
+              "name": "unifiSecRulesUdp1900In",
+              "properties":{
+                "description":"Allow Unifi Conntroller UDP port 1900 Inbound",
+                "priority": 170,
+                "protocol":"Udp",
+                "access":"Allow",
+                "direction":"Inbound",
+                "sourcePortRange": "1900",
+                "destinationPortRange": "1900",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            },
+            {
+              "name": "unifiSecRulesUdp1900Out",
+              "properties":{
+                "description":"Allow Unifi Conntroller UDP port 1900 Inbound",
+                "priority": 161,
+                "protocol":"Udp",
+                "access":"Allow",
+                "direction":"Outbound",
+                "sourcePortRange": "1900",
+                "destinationPortRange": "1900",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*"
+              }
+            }                                                      
           ]
         }
       },
