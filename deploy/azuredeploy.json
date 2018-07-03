@@ -94,7 +94,7 @@
     "publicIpAddressType":"dynamic",
     "osImagePublisher": "Canonical",
     "osImageOffer": "UbuntuServer",
-    "osImageSku": "18.04-LTS",
+    "osImageSku": "16.04-LTS",
     "osImageVersion": "Latest"   
     },
   "resources": [
