@@ -495,7 +495,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "name": "[concat(parameters('vmName'),'configureUnifi')]",
+      "name": "[concat('/configureUnifi')]",
       "apiVersion": "2017-05-10",
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
