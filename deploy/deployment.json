@@ -33,7 +33,7 @@
               "[variables('installUnifitemplateUri')]",
               "[variables('configureUnifiTemplateUri')]"
             ],
-            "commandToExecute": "sh unifi-config-ubuntu.sh"
+            "commandToExecute": "sh unifi-install-ubuntu.sh && sh unifi-install-ubuntu.sh"
           }
         }
       }
