@@ -29,4 +29,4 @@ sudo ufw allow 1900 udp
 sudo ufw allow ssh
 
 #enable unifi
-sudo service unifi start 
+sudo systemctl start unifi 

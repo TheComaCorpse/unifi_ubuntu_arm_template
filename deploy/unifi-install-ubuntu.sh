@@ -2,13 +2,13 @@
 echo 'deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti' | sudo tee -a /etc/apt/sources.list
 
 #add GPG Keys
-sudo apt-key -y adv --keyserver keyserver.ubuntu.com --recv C0A52C50
+sudo apt-key -y adv --keyserver keyserver.ubuntu.com --recv C0A52C50 && sudo apt-key -y adv --keyserver keyserver.ubuntu.com -recv 7f0ceb10
 
 #Update to latest Package
 sudo apt-get -y update 
 
 #Install and upgrade the Unifi Controller and Java SDK 8
-sudo apt-get install -y --allow-unauthenticated Unifi
+sudo apt-get -y install Unifi
 
 #Install Java 8 SDK 
 #sudo apt-get -y install openjdk-8-jdk --allow-unauthenticated
