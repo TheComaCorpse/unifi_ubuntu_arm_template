@@ -2,16 +2,16 @@ Connect-AzureRmAccount
 
 Select-AzureRmSubscription -SubscriptionId 03b5540a-3a3d-45b4-a3b8-d1432ffee710
 
-$templatefile = 'C:\Users\Alexa\xDev\git\unifi_ubuntu_arm_template\deploy\azuredeploy.json'
-$parameterfile = 'C:\Users\Alexa\xDev\git\unifi_ubuntu_arm_template\deploy\azuredeployparameters.json'
+$templateUri = 'https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/azuredeploy.json'
+$parameterUri = 'https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/azuredeployparameters.json'
 
 
 
 New-AzureRmResourceGroup -Location 'East Us 2' -Name ComaCorpUnifi
 
 New-AzureRmResourceGroupDeployment -Name vmDeploy -ResourceGroupName ComaCorpUnifi `
-                                   -TemplateFile $templatefile `
-                                   -TemplateParameterFile $parameterfile `
+                                   -TemplateUri $templateUri `
+                                   -TemplateParameterUri $parameterUri `
                                    -verbose `
                                    #-DeploymentDebugLogLevel All 
 
