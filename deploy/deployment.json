@@ -13,6 +13,10 @@
         }
       }
     },
+    "variables": {
+      "installUnifitemplateUri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-install-ubuntu.sh",
+      "configureUnifiTemplateUri": "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-config-ubuntu.sh"
+    },
     "resources": [
       {
         "type": "Microsoft.Compute/virtualMachines/extensions",
@@ -26,7 +30,8 @@
           "autoUpgradeMinorVersion": true,
           "settings": {
             "fileUris": [
-              "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-config-ubuntu.sh"
+              "[variables('installUnifitemplateUri')]",
+              "[variables('configureUnifiTemplateUri')]"
             ],
             "commandToExecute": "sh unifi-config-ubuntu.sh"
           }
