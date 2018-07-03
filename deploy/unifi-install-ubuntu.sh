@@ -8,7 +8,7 @@ sudo apt-key -y adv --keyserver keyserver.ubuntu.com --recv C0A52C50
 sudo apt-get -y update 
 
 #Install and upgrade the Unifi Controller and Java SDK 8
-sudo apt-get -y install unifi
+sudo apt-get install -y --allow-unauthenticated Unifi
 
 #Install Java 8 SDK 
 #sudo apt-get -y install openjdk-8-jdk --allow-unauthenticated
