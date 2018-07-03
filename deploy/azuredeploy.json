@@ -95,9 +95,7 @@
     "osImagePublisher": "Canonical",
     "osImageOffer": "UbuntuServer",
     "osImageSku": "18.04-LTS",
-    "osImageVersion": "Latest",
-    "installUnifitemplateUri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-install-ubuntu.sh",
-    "configureUnifiTemplateUri": "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-config-ubuntu.sh"    
+    "osImageVersion": "Latest"   
     },
   "resources": [
     {
@@ -496,24 +494,22 @@
       }
     },
     {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/installUnifi')]",
-      "apiVersion": "2017-12-01",
-      "location": "[parameters('location')]",
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'/configureUnifi')]",
+      "apiVersion": "2017-05-10",
       "dependsOn": [
-        "[Concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
       ],
-      "properties":{          
-        "type": "CustomScript",
-        "publisher": "Microsoft.Azure.Extensions",
-        "typeHandlerVersion": "2.0",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": [
-            "[variables('installUnifitemplateUri')]",
-            "[variables('configureUnifiTemplateUri')]"
-          ],
-          "commandToExecute": "sh unifi-install-ubuntu.sh"
+      "properties": {
+        "mode":"Incremental",
+        "templateLink":{
+          "uri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/deployment.json"
+        },
+        "parameters":{
+          "vmName": "[parameters('vmName')]"
+        },
+        "debugSetting":{
+          "detailLevel": "requestContent,responseContent"
         }
       }
     }
