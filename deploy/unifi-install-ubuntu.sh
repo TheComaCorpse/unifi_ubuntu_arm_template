@@ -11,5 +11,5 @@ sudo apt-get -y update
 sudo apt-get -y install unifi
 
 #Install Java 8 SDK 
-sudo apt-get -y install openjdk-8-jdk --allow-unauthenticated
+#sudo apt-get -y install openjdk-8-jdk --allow-unauthenticated
 
