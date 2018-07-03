@@ -15,7 +15,7 @@ New-AzureRmResourceGroupDeployment -Name vmDeploy -ResourceGroupName ComaCorpUni
                                    -verbose `
                                    #-DeploymentDebugLogLevel All 
 
-#Get-AzureRmResourceGroupDeploymentOperation -DeploymentName vmDeploy -ResourceGroupName ComaCorpUnifi
+Get-AzureRmResourceGroupDeploymentOperation -DeploymentName vmDeploy -ResourceGroupName ComaCorpUnifi
 
 
 

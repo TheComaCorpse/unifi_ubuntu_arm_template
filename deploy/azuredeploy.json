@@ -96,7 +96,8 @@
     "osImageOffer": "UbuntuServer",
     "osImageSku": "18.04-LTS",
     "osImageVersion": "Latest",
-    "installUnifitemplateUri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-install-ubuntu.sh"    
+    "installUnifitemplateUri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-install-ubuntu.sh",
+    "configureUnifiTemplateUri": "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/unifi-config-ubuntu.sh"    
     },
   "resources": [
     {
@@ -509,29 +510,11 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "[variables('installUnifitemplateUri')]"
+            "[variables('installUnifitemplateUri')]",
+            "[variables('configureUnifiTemplateUri')]"
           ],
           "commandToExecute": "sh unifi-install-ubuntu.sh"
         }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "name": "configUnifi",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),'/extensions/installUnifi')]"
-      ],
-      "properties":{
-        "mode":"Incremental",
-        "templateLink":{
-          "uri": "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/deployment.json"
-        },
-        "parameters":{
-          "vmName": {
-            "value": "[parameters('vmName')]"
-          }
-        }          
       }
     }
   ]
