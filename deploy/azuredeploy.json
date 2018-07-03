@@ -505,8 +505,8 @@
         "templateLink":{
           "uri":"https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/deployment.json"
         },
-        "parameters":{
-          "vmName": "[parameters('vmName')]"
+        "parametersLink":{
+          "uri": "https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_arm_template/master/deploy/azuredeployparameters.json"
         },
         "debugSetting":{
           "detailLevel": "requestContent,responseContent"
