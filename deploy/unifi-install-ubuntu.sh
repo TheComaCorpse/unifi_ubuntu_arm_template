@@ -2,7 +2,7 @@
 echo 'deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti' | sudo tee -a /etc/apt/sources.list
 
 #add GPG Keys
-sudo apt-key -y --allow-unauthenticated adv --keyserver keyserver.ubuntu.com --recv C0A52C50 
+sudo apt-key -y --allow-unauthenticated adv --keyserver keyserver.ubuntu.com --recv 06E85760C0A52C50  
 sudo apt-key -y --allow-unauthenticated adv --keyserver keyserver.ubuntu.com -recv 7f0ceb10
 
 #Update to latest Package
