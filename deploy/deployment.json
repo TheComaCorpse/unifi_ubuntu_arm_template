@@ -22,10 +22,7 @@
         "type": "Microsoft.Compute/virtualMachines/extensions",
         "name": "[concat(parameters('vmName'),'confgureunifi/scriptToRun')]",
         "apiVersion": "2015-05-01-preview",
-        "location": "[parameters('location')]",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'))]"
-        ],
+        "location": "[parameters('location')]",        
         "properties": {
           "publisher": "Microsoft.Azure.Extensions",
           "type": "CustomScript",
