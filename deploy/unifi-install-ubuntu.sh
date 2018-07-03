@@ -1,8 +1,8 @@
 #install Ubiquiti unifi controller
-echo 'deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti' | sudo tee /etc/apt/sources.list.d/100-ubnt-unifi.list
+echo 'deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti' | sudo tee -a /etc/apt/sources.list
 
 #add GPG Keys
-sudo wget -O /etc/apt/trusted.gpg.d/unifi-repo.gpg https://dl.ubnt.com/unifi/unifi-repo.gpg 
+sudo apt-key -y adv --keyserver keyserver.ubuntu.com --recv 06E85760C0A52C50
 
 #Update to latest Package
 sudo apt-get -y update 
