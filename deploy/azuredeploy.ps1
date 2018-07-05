@@ -1,4 +1,4 @@
-Connect-AzureRmAccount
+#Connect-AzureRmAccount
 
 Select-AzureRmSubscription -SubscriptionId 03b5540a-3a3d-45b4-a3b8-d1432ffee710
 
@@ -7,15 +7,15 @@ $parameterUri = 'https://raw.githubusercontent.com/TheComaCorpse/unifi_ubuntu_ar
 
 
 
-New-AzureRmResourceGroup -Location 'East Us 2' -Name ComaCorpUnifi
+New-AzureRmResourceGroup -Location 'East Us 2' -Name xUnifi
 
-New-AzureRmResourceGroupDeployment -Name vmDeploy -ResourceGroupName ComaCorpUnifi `
+New-AzureRmResourceGroupDeployment -Name vmDeploy -ResourceGroupName xUnifi `
                                    -TemplateUri $templateUri `
                                    -TemplateParameterUri $parameterUri `
                                    -verbose `
-                                   #-DeploymentDebugLogLevel All 
+                                   -DeploymentDebugLogLevel All 
 
-Get-AzureRmResourceGroupDeploymentOperation -DeploymentName vmDeploy -ResourceGroupName ComaCorpUnifi
+Get-AzureRmResourceGroupDeploymentOperation -DeploymentName vmDeploy -ResourceGroupName xUnifi
 
 
 
