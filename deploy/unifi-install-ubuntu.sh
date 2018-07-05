@@ -10,7 +10,7 @@ sudo apt-get -y --allow-unauthenticated update
 
 
 #Install Java 8 SDK 
-sudo apt-get -y --allow-unauthenticated install openjdk-8-jdk 
+#sudo apt-get -y --allow-unauthenticated install openjdk-8-jdk 
 
 #Install and upgrade the Unifi Controller and Java SDK 8
 sudo apt-get -y --allow-unauthenticated install Unifi
